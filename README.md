@@ -3,8 +3,8 @@
 O **FlowMap** é uma aplicação web desenvolvida para transformar relatos soltos e desorganizados de processos e rotinas em uma trilha visual de etapas, diagnóstico de gargalos, sugestões de melhoria e checklist acionável com salvamento automático no navegador.
 
 Acesso ao produto:
-- **Aplicação online (GitHub Pages):** `https://marinamirandafp.github.io/FlowMap/`
-- **Repositório:** `https://github.com/marinamirandafp/FlowMap`
+- **Aplicação online (GitHub Pages):** [https://marinamirandafp.github.io/FlowMap/]
+- **Repositório:** (https://github.com/marinamirandafp/FlowMap)
 
 ---
 
