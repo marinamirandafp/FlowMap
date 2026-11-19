@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FlowMap — Organizador de Processos</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+      background-color: #f4ede2;
+      background-image:
+        radial-gradient(rgba(30, 27, 24, 0.10) 1px, transparent 1px),
+        radial-gradient(circle at 8% 4%, rgba(200, 90, 50, 0.12), transparent 36%),
+        radial-gradient(circle at 92% 10%, rgba(42, 111, 94, 0.11), transparent 36%);
+      background-size: 22px 22px, 100% 100%, 100% 100%;
+      color: #1e1b18;
+      line-height: 1.55;
+    }
+
+    .topo {
+      background-color: #fffaf2;
+      border-bottom: 1px solid #dfd2c0;
+      padding: 14px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .topo-interno {
+      max-width: 1080px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .marca {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-fm {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #c85a32, #b57912);
+      color: #fffaf2;
+      font-weight: bold;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .acoes-topo {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .container {
+      max-width: 1080px;
+      margin: 24px auto 64px auto;
+      padding: 0 20px;
+    }
+
+    .bloco {
+      background-color: #fffaf2;
+      border: 1px solid #dfd2c0;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.45fr 0.75fr;
+      gap: 18px;
+      align-items: center;
+    }
+
+    .box-svg {
+      background-color: #f4ede2;
+      border: 1px dashed #cbb89d;
+      border-radius: 14px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .selo {
+      display: inline-block;
+      background-color: #fdece5;
+      color: #a64420;
+      font-size: 12px;
+      font-weight: bold;
+      padding: 4px 10px;
+      border-radius: 99px;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      margin: 0 0 8px 0;
+      font-size: 26px;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+    }
+
+    h2 {
+      margin: 0 0 12px 0;
+      font-size: 20px;
+    }
+
+    h3 {
+      margin: 18px 0 10px 0;
+      font-size: 16px;
+    }
+
+    p {
+      margin: 0 0 10px 0;
+      color: #5c5349;
+    }
+
+    .passos-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .passo-box {
+      background-color: #f4ede2;
+      border: 1px solid #dfd2c0;
+      border-radius: 12px;
+      padding: 13px 15px;
+      font-size: 13px;
+    }
+
+    .gaveta-salvos {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #dfd2c0;
+    }
+
+    .lista-salvos {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .card-salvo {
+      background-color: #f4ede2;
+      border: 1px solid #cbbba4;
+      border-radius: 10px;
+      padding: 11px 13px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .abrir-salvo {
+      background: transparent;
+      border: none;
+      padding: 0;
+      text-align: left;
+      color: #1e1b18;
+      font-weight: normal;
+      flex: 1;
+    }
+
+    .excluir-salvo {
+      background-color: #fffaf2;
+      border: 1px solid #cbbba4;
+      color: #5c5349;
+      border-radius: 7px;
+      padding: 4px 8px;
+      font-size: 12px;
+    }
+
+    .excluir-salvo:hover {
+      background-color: #fdece5;
+      color: #a64420;
+      border-color: #c85a32;
+    }
+
+    .exemplos-linha {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    button {
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 10px;
+      padding: 9px 15px;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+
+    .btn-exemplo {
+      background-color: #f4ede2;
+      color: #1e1b18;
+      border-color: #cbbba4;
+      border-radius: 999px;
+      padding: 6px 13px;
+      font-size: 13px;
+    }
+
+    .btn-exemplo:hover {
+      background-color: #fdece5;
+      border-color: #c85a32;
+      color: #a64420;
+    }
+
+    .btn-gerar {
+      background-color: #c85a32;
+      color: #fffaf2;
+      padding: 11px 22px;
+    }
+
+    .btn-gerar:hover {
+      background-color: #a64420;
+    }
+
+    .btn-sec {
+      background-color: #efe4d4;
+      color: #1e1b18;
+      border-color: #dfd2c0;
+    }
+
+    .btn-sec:hover {
+      background-color: #e4d5c0;
+    }
+
+    .campos-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      font-size: 14px;
+      margin: 10px 0 6px 0;
+    }
+
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 11px 13px;
+      border: 1px solid #cbbba4;
+      border-radius: 10px;
+      background-color: #fdf9f2;
+      color: #1e1b18;
+      font-family: inherit;
+      font-size: 14px;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #c85a32;
+      background-color: #fffdf9;
+    }
+
+    textarea {
+      min-height: 135px;
+      resize: vertical;
+    }
+
+    .rodape-form {
+      margin-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .escondido {
+      display: none;
+    }
+
+    .metricas {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .metrica-card {
+      background-color: #f4ede2;
+      border: 1px solid #dfd2c0;
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .metrica-val {
+      font-size: 21px;
+      font-weight: bold;
+      display: block;
+      margin-top: 4px;
+    }
+
+    .barra-fundo {
+      height: 8px;
+      background-color: #dfd2c0;
+      border-radius: 99px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .barra-preenchida {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #c85a32, #2a6f5e);
+    }
+
+    .colunas-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .col-box {
+      background-color: #f4ede2;
+      border: 1px solid #dfd2c0;
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .trilha {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: stretch;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .no-fluxo {
+      background-color: #f4ede2;
+      border: 1px solid #dfd2c0;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 13px;
+      max-width: 260px;
+      flex: 1 1 180px;
+    }
+
+    .no-fluxo.feito {
+      background-color: #e3f2ee;
+      border-color: #9bc9bc;
+    }
+
+    .seta-fluxo {
+      display: flex;
+      align-items: center;
+      font-weight: bold;
+      color: #c85a32;
+      font-size: 16px;
+    }
+
+    .item-etapa {
+      background-color: #fdf9f2;
+      border: 1px solid #dfd2c0;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+    }
+
+    .item-etapa.concluida {
+      background-color: #e3f2ee;
+      border-color: #9bc9bc;
+    }
+
+    .item-etapa.concluida .titulo-etapa {
+      text-decoration: line-through;
+      color: #5c5349;
+    }
+
+    .acao-pratica {
+      margin: 6px 0 8px 24px;
+      font-size: 13px;
+      color: #5c5349;
+    }
+
+    .nota-etapa {
+      margin-left: 24px;
+      width: calc(100% - 24px);
+      padding: 8px 10px;
+      font-size: 13px;
+    }
+
+    .badge-aviso {
+      display: inline-block;
+      font-size: 12px;
+      background-color: #fef3d6;
+      color: #92400e;
+      padding: 2px 8px;
+      border-radius: 99px;
+      margin-left: 8px;
+    }
+
+    .badge-ok {
+      display: inline-block;
+      font-size: 12px;
+      background-color: #e3f2ee;
+      color: #1e5648;
+      padding: 2px 8px;
+      border-radius: 99px;
+      margin-left: 8px;
+    }
+
+    @media (max-width: 820px) {
+      .hero-grid,
+      .campos-2,
+      .passos-3,
+      .metricas,
+      .colunas-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="topo">
+    <div class="topo-interno">
+      <div class="marca">
+        <div class="logo-fm">FM</div>
+        <div>
+          <strong>FlowMap</strong><br />
+          <span style="font-size:12px; color:#5c5349;">Diagnóstico de rotinas e checklist de ação</span>
+        </div>
+      </div>
+      <div class="acoes-topo">
+        <button type="button" class="btn btn-sec" onclick="alternarSalvos()">
+          Processos salvos (<span id="qtdSalvos">0</span>)
+        </button>
+        <button type="button" class="btn btn-sec" onclick="limparCampos()">Novo processo</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="bloco">
+      <div class="hero-grid">
+        <div>
+          <span class="selo">Como funciona</span>
+          <h1>Transforme rotinas confusas em diagnóstico e plano de ação</h1>
+          <p>
+            Escreva como o processo funciona hoje ou clique em um exemplo pronto. O FlowMap mostra o fluxo, aponta onde trava e gera um checklist com ações práticas para executar.
+          </p>
+        </div>
+
+        <div class="box-svg">
+          <svg width="190" height="58" viewBox="0 0 190 58" fill="none">
+            <line x1="34" y1="29" x2="82" y2="29" stroke="#c85a32" stroke-width="2" stroke-dasharray="4 3" />
+            <line x1="108" y1="29" x2="156" y2="29" stroke="#2a6f5e" stroke-width="2" stroke-dasharray="4 3" />
+            <rect x="8" y="13" width="26" height="32" rx="7" fill="#fdece5" stroke="#c85a32" stroke-width="2" />
+            <rect x="82" y="10" width="26" height="38" rx="8" fill="#fef3d6" stroke="#b57912" stroke-width="2" />
+            <rect x="156" y="13" width="26" height="32" rx="7" fill="#e3f2ee" stroke="#2a6f5e" stroke-width="2" />
+          </svg>
+          <div style="font-size:12px; color:#5c5349; font-weight:bold;">Relato -&gt; Diagnóstico -&gt; Checklist</div>
+        </div>
+      </div>
+
+      <div class="passos-3">
+        <div class="passo-box">
+          <strong>1. Descreva o cenário</strong><br />
+          <span>Conte o que acontece hoje, onde há espera ou retrabalho.</span>
+        </div>
+        <div class="passo-box">
+          <strong>2. Veja os gargalos</strong><br />
+          <span>Entenda o que trava o processo e como melhorar.</span>
+        </div>
+        <div class="passo-box">
+          <strong>3. Execute as ações</strong><br />
+          <span>Marque o que foi feito e anote observações em cada item.</span>
+        </div>
+      </div>
+
+      <div id="gavetaSalvos" class="gaveta-salvos escondido">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
+          <strong>Processos salvos neste navegador</strong>
+          <span style="font-size:12px; color:#5c5349;">Clique em um item para reabrir seu diagnóstico e checklist.</span>
+        </div>
+        <div id="listaSalvos" class="lista-salvos"></div>
+      </div>
+    </div>
+
+    <div class="bloco">
+      <h2>1. Descreva o processo ou rotina</h2>
+
+      <div class="exemplos-linha">
+        <span style="font-size:13px; color:#5c5349;">Testar agora:</span>
+        <button type="button" class="btn btn-exemplo" onclick="preencherExemplo('onboarding')">Onboarding de cliente</button>
+        <button type="button" class="btn btn-exemplo" onclick="preencherExemplo('triagem')">Triagem de pedidos</button>
+        <button type="button" class="btn btn-exemplo" onclick="preencherExemplo('rotina')">Rotina semanal</button>
+      </div>
+
+      <div class="campos-2">
+        <div>
+          <label for="nomeProc">Nome do processo</label>
+          <input id="nomeProc" type="text" placeholder="Ex.: Onboarding de novo cliente" />
+        </div>
+        <div>
+          <label for="ctxProc">Quem participa / objetivo</label>
+          <input id="ctxProc" type="text" placeholder="Ex.: Comercial e Operações - entregar em até 48h" />
+        </div>
+      </div>
+
+      <label for="descProc">Como funciona hoje?</label>
+      <textarea id="descProc" placeholder="Ex.: O cliente fecha pelo WhatsApp e o aviso sai solto no grupo. Alguém demora até um dia para criar pasta e mandar formulário. Depois o time pede informações que já tinham sido enviadas antes."></textarea>
+
+      <div class="rodape-form">
+        <span id="msgStatus" style="font-size:13px; font-weight:bold; color:#2a6f5e;"></span>
+        <button type="button" class="btn btn-gerar" onclick="gerarDiagnostico()">Gerar plano organizado</button>
+      </div>
+    </div>
+
+    <div id="areaResultado" class="bloco escondido">
+      <span class="selo">Plano gerado</span>
+      <h2 id="outTitulo"></h2>
+      <p id="outContexto"></p>
+
+      <div class="metricas">
+        <div class="metrica-card">
+          <span style="font-size:12px; color:#5c5349;">Progresso do checklist</span>
+          <span id="mProgresso" class="metrica-val">0%</span>
+          <div class="barra-fundo">
+            <div id="barraProgresso" class="barra-preenchida"></div>
+          </div>
+        </div>
+        <div class="metrica-card">
+          <span style="font-size:12px; color:#5c5349;">Etapas no fluxo</span>
+          <span id="mEtapas" class="metrica-val">0</span>
+        </div>
+        <div class="metrica-card">
+          <span style="font-size:12px; color:#5c5349;">Pontos de atenção</span>
+          <span id="mGargalos" class="metrica-val">0</span>
+        </div>
+        <div class="metrica-card">
+          <span style="font-size:12px; color:#5c5349;">Tempo estimado de ajuste</span>
+          <span id="mTempo" class="metrica-val">0 min</span>
+        </div>
+      </div>
+
+      <h3>Trilha visual do fluxo</h3>
+      <div id="outTrilha" class="trilha"></div>
+
+      <div class="colunas-3">
+        <div class="col-box">
+          <strong>Resumo do cenário</strong>
+          <p id="outResumo" style="margin-top:8px; font-size:13px;"></p>
+        </div>
+        <div class="col-box">
+          <strong style="color:#92400e;">Onde trava (Gargalos)</strong>
+          <ul id="outGargalos" style="margin:8px 0 0 0; padding-left:18px; font-size:13px;"></ul>
+        </div>
+        <div class="col-box">
+          <strong style="color:#1e5648;">Como melhorar</strong>
+          <ul id="outMelhorias" style="margin:8px 0 0 0; padding-left:18px; font-size:13px;"></ul>
+        </div>
+      </div>
+
+      <h3>Checklist de execução (o que fazer)</h3>
+      <div id="outChecklist"></div>
+    </div>
+  </div>
+
+  <script>
+    var CHAVE_STORAGE = 'flowmap_processos_salvos_v1';
+    var processosSalvos = [];
+    var processoAtualId = null;
+
+    function salvarNoNavegador() {
+      try {
+        localStorage.setItem(CHAVE_STORAGE, JSON.stringify(processosSalvos));
+      } catch (e) {}
+    }
+
+    function carregarDoNavegador() {
+      try {
+        var bruto = localStorage.getItem(CHAVE_STORAGE);
+        if (bruto) {
+          var dados = JSON.parse(bruto);
+          if (Array.isArray(dados)) {
+            processosSalvos = dados;
+          }
+        }
+      } catch (e) {
+        processosSalvos = [];
+      }
+      atualizarPainelSalvos();
+    }
+
+    function atualizarPainelSalvos() {
+      document.getElementById('qtdSalvos').textContent = String(processosSalvos.length);
+      var lista = document.getElementById('listaSalvos');
+      lista.innerHTML = '';
+
+      if (processosSalvos.length === 0) {
+        lista.innerHTML = '<p style="font-size:13px; margin:0;">Nenhum processo salvo ainda. Gere um plano para guardar aqui.</p>';
+        return;
+      }
+
+      for (var i = 0; i < processosSalvos.length; i++) {
+        (function (proc) {
+          var feitas = 0;
+          for (var j = 0; j < proc.itens.length; j++) {
+            if (proc.itens[j].feita) feitas++;
+          }
+
+          var card = document.createElement('div');
+          card.className = 'card-salvo';
+
+          var btnAbrir = document.createElement('button');
+          btnAbrir.type = 'button';
+          btnAbrir.className = 'abrir-salvo';
+          btnAbrir.innerHTML =
+            '<strong>' + proc.nome + '</strong><br />' +
+            '<span style="font-size:12px; color:#5c5349;">' + feitas + '/' + proc.itens.length + ' feitos · ' + proc.tempoTotal + '</span>';
+          btnAbrir.onclick = function () {
+            processoAtualId = proc.id;
+            document.getElementById('nomeProc').value = proc.nome;
+            document.getElementById('ctxProc').value = proc.contexto;
+            document.getElementById('descProc').value = proc.relato;
+            document.getElementById('gavetaSalvos').className = 'gaveta-salvos escondido';
+            document.getElementById('areaResultado').className = 'bloco';
+            document.getElementById('msgStatus').textContent = 'Processo "' + proc.nome + '" reaberto.';
+            renderizarTela();
+          };
+
+          var btnExcluir = document.createElement('button');
+          btnExcluir.type = 'button';
+          btnExcluir.className = 'excluir-salvo';
+          btnExcluir.textContent = 'X';
+          btnExcluir.title = 'Excluir processo salvo';
+          btnExcluir.onclick = function () {
+            processosSalvos = processosSalvos.filter(function (item) {
+              return item.id !== proc.id;
+            });
+            if (processoAtualId === proc.id) {
+              processoAtualId = null;
+              document.getElementById('areaResultado').className = 'bloco escondido';
+            }
+            salvarNoNavegador();
+            atualizarPainelSalvos();
+          };
+
+          card.appendChild(btnAbrir);
+          card.appendChild(btnExcluir);
+          lista.appendChild(card);
+        })(processosSalvos[i]);
+      }
+    }
+
+    function alternarSalvos() {
+      var gaveta = document.getElementById('gavetaSalvos');
+      if (gaveta.className.indexOf('escondido') !== -1) {
+        gaveta.className = 'gaveta-salvos';
+      } else {
+        gaveta.className = 'gaveta-salvos escondido';
+      }
+    }
+
+    function formatarDuracao(totalMinutos) {
+      var mins = Math.max(5, Math.round(totalMinutos));
+      if (mins < 60) {
+        return mins + ' min';
+      }
+      var horas = Math.floor(mins / 60);
+      var resto = mins % 60;
+      if (resto === 0) {
+        return horas + 'h';
+      }
+      return horas + 'h ' + resto + 'min';
+    }
+
+    function criarAcaoPratica(trecho, indice) {
+      var t = trecho.toLowerCase();
+      if (t.indexOf('whatsapp') !== -1 || t.indexOf('mensagem') !== -1 || t.indexOf('grupo') !== -1 || t.indexOf('bloco de notas') !== -1) {
+        return {
+          titulo: 'Centralizar o registro de entrada',
+          acao: 'O que fazer: tirar o aviso de chats soltos ou notas avulsas e registrar os dados principais em um único formulário ou canal padrão.',
+          minutos: 15,
+          gargalo: true
+        };
+      }
+      if (t.indexOf('demora') !== -1 || t.indexOf('espera') !== -1 || t.indexOf('dia') !== -1 || t.indexOf('véspera') !== -1 || t.indexOf('cima da hora') !== -1) {
+        return {
+          titulo: 'Definir responsável e prazo limite na etapa',
+          acao: 'O que fazer: atribuir um dono claro e um prazo antecipado para evitar filas, esperas paradas e correria no final.',
+          minutos: 20,
+          gargalo: true
+        };
+      }
+      if (t.indexOf('mesma') !== -1 || t.indexOf('de novo') !== -1 || t.indexOf('retrabalho') !== -1 || t.indexOf('repetidos') !== -1 || t.indexOf('falta item') !== -1) {
+        return {
+          titulo: 'Eliminar retrabalho e conferência tardia',
+          acao: 'O que fazer: validar dados, estoque ou padrão combinado antes de avançar para a próxima etapa.',
+          minutos: 15,
+          gargalo: true
+        };
+      }
+      if (t.indexOf('urgente') !== -1 || t.indexOf('prioridade') !== -1) {
+        return {
+          titulo: 'Aplicar critério de prioridade na triagem',
+          acao: 'O que fazer: classificar o que é urgente de verdade do que pode entrar na fila normal.',
+          minutos: 20,
+          gargalo: true
+        };
+      }
+
+      var curto = trecho.charAt(0).toUpperCase() + trecho.slice(1);
+      if (curto.length > 70) curto = curto.slice(0, 67).trim() + '...';
+
+      return {
+        titulo: 'Estruturar: ' + curto,
+        acao: 'O que fazer: definir quem executa esta etapa (' + (indice + 1) + '), qual é a entrada necessária e o que conta como concluído.',
+        minutos: 25,
+        gargalo: false
+      };
+    }
+
+    function preencherExemplo(tipo) {
+      var nome = document.getElementById('nomeProc');
+      var ctx = document.getElementById('ctxProc');
+      var desc = document.getElementById('descProc');
+
+      if (tipo === 'onboarding') {
+        nome.value = 'Onboarding de novo cliente';
+        ctx.value = 'Comercial e Operações - entregar em até 48h';
+        desc.value = 'O cliente fecha pelo WhatsApp e o aviso sai solto no grupo. Alguém demora até um dia para criar pasta e mandar formulário. Depois o time pede informações que já tinham sido enviadas antes.';
+      } else if (tipo === 'triagem') {
+        nome.value = 'Triagem de pedidos e demandas';
+        ctx.value = 'Equipe - evitar urgências sem critério';
+        desc.value = 'As pessoas mandam pedidos por mensagem dizendo que tudo é urgente. Não há critério de prioridade nem dono claro no início. Metade da semana vai apagando incêndio.';
+      } else if (tipo === 'rotina') {
+        nome.value = 'Rotina semanal de execução';
+        ctx.value = 'Planejamento - foco no que importa';
+        desc.value = 'Começo a semana anotando várias coisas sem separar o que destrava o resultado. No meio da semana acumulam tarefas pequenas e o foco se perde.';
+      }
+
+      document.getElementById('msgStatus').textContent = 'Exemplo carregado. Clique em "Gerar plano organizado".';
+    }
+
+    function limparCampos() {
+      document.getElementById('nomeProc').value = '';
+      document.getElementById('ctxProc').value = '';
+      document.getElementById('descProc').value = '';
+      document.getElementById('msgStatus').textContent = '';
+      document.getElementById('areaResultado').className = 'bloco escondido';
+      processoAtualId = null;
+    }
+
+    function gerarDiagnostico() {
+      var nome = document.getElementById('nomeProc').value.trim();
+      var ctx = document.getElementById('ctxProc').value.trim();
+      var desc = document.getElementById('descProc').value.trim();
+
+      if (!nome || !desc) {
+        document.getElementById('msgStatus').textContent = 'Preencha o nome do processo e como funciona hoje.';
+        return;
+      }
+
+      var brutos = desc.split(/[.!?\n]+/);
+      var trechos = [];
+      for (var i = 0; i < brutos.length; i++) {
+        var limpo = brutos[i].trim();
+        if (limpo.length > 5) {
+          trechos.push(limpo);
+        }
+      }
+
+      if (trechos.length === 0) {
+        trechos.push('Registrar entrada do processo ' + nome);
+        trechos.push('Executar etapa principal com prazo definido');
+        trechos.push('Validar entrega final');
+      }
+
+      var itens = [];
+      var somaMinutos = 0;
+
+      for (var j = 0; j < trechos.length; j++) {
+        var acaoObj = criarAcaoPratica(trechos[j], j);
+        somaMinutos += acaoObj.minutos;
+        itens.push({
+          fluxoTexto: trechos[j].charAt(0).toUpperCase() + trechos[j].slice(1),
+          tituloAcao: acaoObj.titulo,
+          acaoDetalhe: acaoObj.acao,
+          duracaoTexto: formatarDuracao(acaoObj.minutos),
+          gargalo: acaoObj.gargalo,
+          nota: '',
+          feita: false
+        });
+      }
+
+      var gargalosLista = [];
+      var dLower = desc.toLowerCase();
+      if (dLower.indexOf('whatsapp') !== -1 || dLower.indexOf('mensagem') !== -1 || dLower.indexOf('grupo') !== -1 || dLower.indexOf('bloco de notas') !== -1 || dLower.indexOf('documento separado') !== -1) {
+        gargalosLista.push('Informações dispersas em chats, notas ou arquivos sem padrão central.');
+      }
+      if (dLower.indexOf('demora') !== -1 || dLower.indexOf('espera') !== -1 || dLower.indexOf('dia') !== -1 || dLower.indexOf('véspera') !== -1 || dLower.indexOf('cima da hora') !== -1) {
+        gargalosLista.push('Tempo de espera ou correria por falta de prazo ou responsável claro.');
+      }
+      if (dLower.indexOf('mesma') !== -1 || dLower.indexOf('de novo') !== -1 || dLower.indexOf('retrabalho') !== -1 || dLower.indexOf('repetidos') !== -1 || dLower.indexOf('falta item') !== -1 || dLower.indexOf('urgente') !== -1) {
+        gargalosLista.push('Retrabalho, conferência tardia ou falta de critério de prioridade.');
+      }
+      if (gargalosLista.length === 0) {
+        gargalosLista.push('Falta de checkpoints claros entre o início e a entrega.');
+        gargalosLista.push('Acompanhamento manual sem padrão.');
+      }
+
+      var melhorias = [
+        'Padronizar a entrada com um formulário ou modelo único.',
+        'Usar IA para resumir o relato inicial e sugerir o plano de ação.',
+        'Definir responsável e prazo por etapa antes de iniciar.'
+      ];
+
+      var tempoTotalStr = formatarDuracao(somaMinutos);
+      var resumoStr = 'O processo "' + nome + '" foi mapeado em ' + itens.length + ' etapas e convertido em ações práticas para eliminar esperas e retrabalho.';
+
+      var novoProcesso = {
+        id: 'proc-' + Date.now(),
+        nome: nome,
+        contexto: ctx || 'Rotina operacional',
+        relato: desc,
+        resumo: resumoStr,
+        gargalos: gargalosLista,
+        melhorias: melhorias,
+        tempoTotal: tempoTotalStr,
+        itens: itens
+      };
+
+      processosSalvos.unshift(novoProcesso);
+      processoAtualId = novoProcesso.id;
+      salvarNoNavegador();
+      atualizarPainelSalvos();
+
+      document.getElementById('areaResultado').className = 'bloco';
+      document.getElementById('msgStatus').textContent = 'Plano gerado e salvo neste navegador!';
+      renderizarTela();
+    }
+
+    function obterProcessoAtual() {
+      for (var i = 0; i < processosSalvos.length; i++) {
+        if (processosSalvos[i].id === processoAtualId) {
+          return processosSalvos[i];
+        }
+      }
+      return null;
+    }
+
+    function renderizarTela() {
+      var proc = obterProcessoAtual();
+      if (!proc) return;
+
+      document.getElementById('outTitulo').textContent = proc.nome;
+      document.getElementById('outContexto').textContent = 'Contexto: ' + proc.contexto;
+      document.getElementById('outResumo').textContent = proc.resumo;
+
+      var ulG = document.getElementById('outGargalos');
+      ulG.innerHTML = '';
+      for (var g = 0; g < proc.gargalos.length; g++) {
+        var liG = document.createElement('li');
+        liG.textContent = proc.gargalos[g];
+        ulG.appendChild(liG);
+      }
+
+      var ulM = document.getElementById('outMelhorias');
+      ulM.innerHTML = '';
+      for (var m = 0; m < proc.melhorias.length; m++) {
+        var liM = document.createElement('li');
+        liM.textContent = proc.melhorias[m];
+        ulM.appendChild(liM);
+      }
+
+      document.getElementById('mEtapas').textContent = String(proc.itens.length);
+      document.getElementById('mGargalos').textContent = String(proc.gargalos.length);
+      document.getElementById('mTempo').textContent = proc.tempoTotal;
+
+      var trilha = document.getElementById('outTrilha');
+      var lista = document.getElementById('outChecklist');
+      trilha.innerHTML = '';
+      lista.innerHTML = '';
+
+      var feitas = 0;
+
+      for (var i = 0; i < proc.itens.length; i++) {
+        var item = proc.itens[i];
+        if (item.feita) feitas++;
+
+        var no = document.createElement('div');
+        no.className = item.feita ? 'no-fluxo feito' : 'no-fluxo';
+        no.innerHTML = '<strong>' + (i + 1) + '. ' + item.fluxoTexto + '</strong><br /><span style="font-size:12px; color:#5c5349;">Ajuste: ' + item.duracaoTexto + '</span>';
+        trilha.appendChild(no);
+
+        if (i < proc.itens.length - 1) {
+          var seta = document.createElement('div');
+          seta.className = 'seta-fluxo';
+          seta.textContent = '->';
+          trilha.appendChild(seta);
+        }
+
+        (function (indice) {
+          var atual = proc.itens[indice];
+          var card = document.createElement('div');
+          card.className = atual.feita ? 'item-etapa concluida' : 'item-etapa';
+
+          var chk = document.createElement('input');
+          chk.type = 'checkbox';
+          chk.checked = atual.feita;
+          chk.onchange = function () {
+            proc.itens[indice].feita = chk.checked;
+            salvarNoNavegador();
+            atualizarPainelSalvos();
+            renderizarTela();
+          };
+
+          var titulo = document.createElement('span');
+          titulo.className = 'titulo-etapa';
+          titulo.style.fontWeight = 'bold';
+          titulo.style.marginLeft = '8px';
+          titulo.textContent = (indice + 1) + '. ' + atual.tituloAcao;
+
+          card.appendChild(chk);
+          card.appendChild(titulo);
+
+          var dur = document.createElement('span');
+          dur.className = 'badge-ok';
+          dur.textContent = 'Ajuste: ' + atual.duracaoTexto;
+          card.appendChild(dur);
+
+          if (atual.gargalo) {
+            var bG = document.createElement('span');
+            bG.className = 'badge-aviso';
+            bG.textContent = 'Corrige gargalo';
+            card.appendChild(bG);
+          }
+
+          var bS = document.createElement('span');
+          bS.className = atual.feita ? 'badge-ok' : 'badge-aviso';
+          bS.textContent = atual.feita ? 'Feito' : 'A fazer';
+          card.appendChild(bS);
+
+          var pAcao = document.createElement('p');
+          pAcao.className = 'acao-pratica';
+          pAcao.textContent = atual.acaoDetalhe;
+          card.appendChild(pAcao);
+
+          var inputNota = document.createElement('input');
+          inputNota.type = 'text';
+          inputNota.className = 'nota-etapa';
+          inputNota.placeholder = 'Anotação de quem vai fazer ou observação...';
+          inputNota.value = atual.nota;
+          inputNota.oninput = function () {
+            proc.itens[indice].nota = inputNota.value;
+            salvarNoNavegador();
+          };
+          card.appendChild(inputNota);
+
+          lista.appendChild(card);
+        })(i);
+      }
+
+      var pct = proc.itens.length > 0 ? Math.round((feitas / proc.itens.length) * 100) : 0;
+      document.getElementById('mProgresso').textContent = pct + '% (' + feitas + '/' + proc.itens.length + ')';
+      document.getElementById('barraProgresso').style.width = pct + '%';
+    }
+
+    carregarDoNavegador();
+  </script>
+</body>
+</html>
