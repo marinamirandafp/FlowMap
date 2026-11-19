@@ -38,10 +38,10 @@ A Inteligência Artificial foi utilizada como parceira de apoio ao longo do proc
 
 - **Ferramentas escolhidas:** assistente de IA conversacional para ideação, estruturação da lógica, diagnóstico de bugs e refinamento de produto, em conjunto com testes manuais no navegador e edição no VS Code.
 - **Como cada ferramenta foi aplicada:**
-  - *Concepção e proposta de valor:* exploração do problema de processos desorganizados, definição do nome **FlowMap**, estrutura do diagnóstico e formato do pitch.
+  - *Concepção e proposta de valor:* exploração do problema de processos desorganizados, definição do nome **FlowMap** e organização da estrutura de diagnóstico e plano de ação.
   - *Construção e depuração técnica:* desenvolvimento da interface, lógica de geração de etapas/gargalos/checklist, formatação de horas e minutos, persistência em `localStorage` e resolução de falhas de execução em JavaScript.
   - *Refinamento de produto e clareza:* ajustes para tornar o checklist mais acionável, evitar cortes na trilha visual e dar identidade visual própria sem aparência genérica.
-- **Contribuição para o resultado final:** acelerou iterações, ajudou a identificar e corrigir gargalos de código rapidamente e permitiu focar na clareza da experiência e na entrega completa dentro do prazo, mantendo o critério humano sobre o que faz sentido para o usuário.
+- **Contribuição para o resultado final:** acelerou iterações, ajudou a identificar e corrigir gargalos de código rapidamente e permitiu focar na clareza da experiência e na entrega completa, mantendo o critério sobre o que faz sentido para o usuário.
 
 ---
 
